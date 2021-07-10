@@ -14,4 +14,8 @@ Airosearch is a project providing a simple web based search engine for airport i
 
 ## Technologies used
 
+- Maven 3
+- Java 11
+- Spring boot
+
 ## Install
