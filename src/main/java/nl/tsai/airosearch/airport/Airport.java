@@ -1,11 +1,10 @@
 package nl.tsai.airosearch.airport;
 
+import nl.tsai.airosearch.airport.runway.Runway;
 import nl.tsai.airosearch.country.Continent;
 import nl.tsai.airosearch.country.Country;
 import nl.tsai.airosearch.persistence.ListToStringConverter;
-import nl.tsai.airosearch.airport.runway.Runway;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -19,7 +18,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "airport",
@@ -49,15 +50,17 @@ public class Airport {
     @Enumerated(EnumType.STRING)
     @Column(name = "continent")
     private Continent continent;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "iso_country", nullable = false, referencedColumnName = "code")
     private Country country;
+
     @Column(name = "iso_region")
     private String region;
     @Column(name = "municipality")
     private String municipality;
     @Column(name = "scheduled_service")
-    private boolean scheduledService;
+    private Boolean scheduledService;
     @Column(name = "gps_code")
     private String gpsCode;
     @Column(name = "iata_code")
@@ -71,8 +74,9 @@ public class Airport {
     @Convert(converter = ListToStringConverter.class)
     @Column(name = "keywords")
     private List<String> keywords = new ArrayList<>();
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "airportReference", cascade = CascadeType.ALL)
-    private List<Runway> runways = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "airport")
+    private Set<Runway> runways = new HashSet<>();
 
     protected Airport() {
         // Required by JPA
@@ -122,7 +126,7 @@ public class Airport {
         return municipality;
     }
 
-    public boolean isScheduledService() {
+    public Boolean getScheduledService() {
         return scheduledService;
     }
 
@@ -150,7 +154,7 @@ public class Airport {
         return keywords;
     }
 
-    public List<Runway> getRunways() {
+    public Set<Runway> getRunways() {
         return runways;
     }
 }

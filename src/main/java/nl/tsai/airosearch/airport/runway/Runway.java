@@ -4,25 +4,24 @@ import nl.tsai.airosearch.airport.Airport;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "runway")
-public class Runway {
+public class Runway implements Serializable {
 
     @Id
     @Column(name = "id")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, targetEntity = Airport.class)
-    @JoinColumn(name = "airport_ref", referencedColumnName = "id")
-    private Airport airportReference;
-    @Column(name = "airport_ident")
-    private String airportIdentifier;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "airport_id")
+    private Airport airport;
+
     @Column(name = "length_ft")
     private Integer length;
     @Column(name = "width_ft")
@@ -68,12 +67,8 @@ public class Runway {
         return id;
     }
 
-    public Airport getAirportReference() {
-        return airportReference;
-    }
-
-    public String getAirportIdentifier() {
-        return airportIdentifier;
+    public Airport getAirport() {
+        return airport;
     }
 
     public Integer getLength() {

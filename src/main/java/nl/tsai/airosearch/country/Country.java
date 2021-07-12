@@ -1,5 +1,6 @@
 package nl.tsai.airosearch.country;
 
+import nl.tsai.airosearch.airport.Airport;
 import nl.tsai.airosearch.persistence.ListToStringConverter;
 
 import javax.persistence.Column;
@@ -7,12 +8,16 @@ import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "country",
@@ -36,6 +41,9 @@ public class Country implements Serializable {
     @Column(name = "keywords")
     @Convert(converter = ListToStringConverter.class)
     private List<String> keywords = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "country")
+    Set<Airport> airports = new HashSet<>();
 
     protected Country() {
         // Required by JPA
@@ -74,4 +82,7 @@ public class Country implements Serializable {
         return keywords;
     }
 
+    public Set<Airport> getAirports() {
+        return airports;
+    }
 }
