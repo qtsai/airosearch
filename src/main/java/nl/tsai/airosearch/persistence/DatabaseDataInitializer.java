@@ -5,6 +5,8 @@ import nl.tsai.airosearch.airport.AirportCSVRecordsProcessor;
 import nl.tsai.airosearch.airport.AirportRepository;
 import nl.tsai.airosearch.country.CountryCSVRecordsProcessor;
 import nl.tsai.airosearch.country.CountryRepository;
+import nl.tsai.airosearch.csv.CSVImport;
+import nl.tsai.airosearch.csv.CSVImportHistoryRepository;
 import nl.tsai.airosearch.csv.CSVRecordProcessor;
 import nl.tsai.airosearch.runway.RunwayCSVRecordsProcessor;
 import nl.tsai.airosearch.runway.RunwayRepository;
@@ -29,41 +31,68 @@ public class DatabaseDataInitializer {
     private final CountryRepository countryRepository;
     private final AirportRepository airportRepository;
     private final RunwayRepository runwayRepository;
+    private final CSVImportHistoryRepository csvImportHistoryRepository;
 
-    public DatabaseDataInitializer(CountryRepository countryRepository, AirportRepository airportRepository, RunwayRepository runwayRepository) {
+    public DatabaseDataInitializer(CountryRepository countryRepository, AirportRepository airportRepository, RunwayRepository runwayRepository, CSVImportHistoryRepository csvImportHistoryRepository) {
         this.countryRepository = countryRepository;
         this.airportRepository = airportRepository;
         this.runwayRepository = runwayRepository;
+        this.csvImportHistoryRepository = csvImportHistoryRepository;
     }
 
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReadyEvent() {
-        StopWatch sw = new StopWatch("DB init timer");
-        sw.start("Initializing Database");
-        log.info("Initializing database data");
-        log.info("Initializing country data");
+        StopWatch sw = new StopWatch("Database Initialization");
+        log.info("Initializing Database data...");
+        log.info("Initializing 'country' data...");
+        sw.start("country");
         initializeCountryData();
-        log.info("Initializing airport data");
+        sw.stop();
+        log.info("Completed initialization of 'country' data in {} ms", sw.getLastTaskTimeMillis());
+        log.info("Initializing 'airport' data...");
+        sw.start("airport");
         initializeAirportData();
-        log.info("Initializing runway data");
+        sw.stop();
+        log.info("Completed initialization of 'airport' data in {} ms", sw.getLastTaskTimeMillis());
+        log.info("Initializing 'runway' data...");
+        sw.start("runway");
         initializeRunwayData();
         sw.stop();
-        log.info("Finished with initializing database data in {} seconds", sw.getTotalTimeSeconds());
+        log.info("Completed initialization of 'runway' data in {} ms", sw.getLastTaskTimeMillis());
+        log.info("Finished with initializing database data in {} ms", sw.getTotalTimeMillis());
     }
 
     private void initializeCountryData() {
-        ClassPathResource countryCSV = new ClassPathResource("db/countries.csv");
+        String path = "db/countries.csv";
+        if (csvImportHistoryRepository.existsByPath(path)) {
+            log.info("Skipping 'country' data, already initialized");
+            return;
+        }
+        ClassPathResource countryCSV = new ClassPathResource(path);
         readCSVFile(countryCSV, new CountryCSVRecordsProcessor(countryRepository));
+        csvImportHistoryRepository.save(new CSVImport(path));
     }
 
     private void initializeAirportData() {
-        ClassPathResource airportCSV = new ClassPathResource("db/airports.csv");
+        String path = "db/airports.csv";
+        if (csvImportHistoryRepository.existsByPath(path)) {
+            log.info("Skipping 'airport' data, already initialized");
+            return;
+        }
+        ClassPathResource airportCSV = new ClassPathResource(path);
         readCSVFile(airportCSV, new AirportCSVRecordsProcessor(airportRepository, countryRepository));
+        csvImportHistoryRepository.save(new CSVImport(path));
     }
 
     private void initializeRunwayData() {
-        ClassPathResource runwayCSV = new ClassPathResource("db/runways.csv");
+        String path = "db/runways.csv";
+        if (csvImportHistoryRepository.existsByPath(path)) {
+            log.info("Skipping 'runway' data, already initialized");
+            return;
+        }
+        ClassPathResource runwayCSV = new ClassPathResource(path);
         readCSVFile(runwayCSV, new RunwayCSVRecordsProcessor(runwayRepository, airportRepository));
+        csvImportHistoryRepository.save(new CSVImport(path));
     }
 
     private void readCSVFile(Resource resource, CSVRecordProcessor processor) {
@@ -77,6 +106,5 @@ public class DatabaseDataInitializer {
         } catch (IOException e) {
             log.warn("Failed to read records");
         }
-
     }
 }
