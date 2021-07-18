@@ -6,6 +6,15 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import nl.tsai.airosearch.airport.Airport;
+import org.apache.lucene.analysis.core.LowerCaseFilterFactory;
+import org.apache.lucene.analysis.standard.StandardTokenizerFactory;
+import org.hibernate.search.annotations.Analyzer;
+import org.hibernate.search.annotations.AnalyzerDef;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.TermVector;
+import org.hibernate.search.annotations.TokenFilterDef;
+import org.hibernate.search.annotations.TokenizerDef;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +34,13 @@ import java.util.Set;
         indexes = {
                 @Index(name = "IX_country_name", columnList = "name"),
         })
+@Indexed
+@AnalyzerDef(name = "customAnalyzer",
+        tokenizer = @TokenizerDef(factory = StandardTokenizerFactory.class),
+        filters = {
+                @TokenFilterDef(factory = LowerCaseFilterFactory.class)
+        }
+)
 @EqualsAndHashCode(exclude = {"airports"})
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,8 +51,10 @@ public class Country implements Serializable {
     @Id
     @Column(name = "id")
     private Integer id;
+    @Field(analyzer = @Analyzer(definition = "customAnalyzer"))
     @Column(name = "code", nullable = false, unique = true)
     private String code;
+    @Field(termVector = TermVector.YES, analyzer = @Analyzer(definition = "customAnalyzer"))
     @Column(name = "name", nullable = false)
     private String name;
     @Enumerated(EnumType.STRING)

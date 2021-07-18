@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CountryServiceImpl implements CountryService{
+public class CountryServiceImpl implements CountryService {
 
     private final CountryRepository countryRepository;
+    private final CountrySearchRepository countrySearchRepository;
 
-    public CountryServiceImpl(CountryRepository countryRepository) {
+    public CountryServiceImpl(CountryRepository countryRepository,
+                              CountrySearchRepository countrySearchRepository) {
         this.countryRepository = countryRepository;
+        this.countrySearchRepository = countrySearchRepository;
     }
 
     @Override
@@ -19,4 +22,11 @@ public class CountryServiceImpl implements CountryService{
         List<Country> countries = countryRepository.findTop10CountriesByAirportsCount();
         return countries.stream().map(CountryDto::new).collect(Collectors.toList());
     }
+
+    @Override
+    public List<CountryDto> searchCountriesBy(String term, int size, int page) {
+        List<Country> countries = countrySearchRepository.searchByTerm(term, size, page);
+        return countries.stream().map(CountryDto::new).collect(Collectors.toList());
+    }
+
 }
