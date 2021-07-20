@@ -16,31 +16,27 @@ public class CountrySearchRepository extends BaseSearchRepository<Country> {
         super(fullTextEntityManager, Country.class);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Country> searchByTerm(String term, int size, int page) {
-        QueryBuilder queryBuilder = getQueryBuilder();
-        Query query = getQueryBuilder().bool()
+        final QueryBuilder queryBuilder = getQueryBuilder();
+        final Query query = getQueryBuilder().bool()
                 .should(exactCodeMatching(queryBuilder, term))
                 .should(exactNameMatching(queryBuilder, term))
                 .should(wildcardNameMatching(queryBuilder, term))
                 .should(fuzzyNameMatching(queryBuilder, term))
                 .createQuery();
-        FullTextQuery fullTextQuery = createFullTextQuery(query);
-        return (List<Country>) fullTextQuery
-                .setMaxResults(size)
-                .setFirstResult(firstResult(size, page))
-                .getResultList();
+        FullTextQuery fullTextQuery = createFullTextQuery(query).setMaxResults(size).setFirstResult(size * (page - 1));
+        @SuppressWarnings("unchecked") final List<Country> results = fullTextQuery.getResultList();
+        return results;
     }
 
-    private int firstResult(int size, int page) {
-        if (page < 1) page = 1;
-        return size * (page - 1);
+    public List<Country> searchSingleByTerm(String term) {
+        return searchByTerm(term, 1, 1);
     }
 
     private Query exactCodeMatching(QueryBuilder qb, String term) {
         return qb.keyword()
                 .boostedTo(100f)
-                .onFields("code")
+                .onField("code")
                 .matching(term)
                 .createQuery();
     }
@@ -48,7 +44,7 @@ public class CountrySearchRepository extends BaseSearchRepository<Country> {
     private Query exactNameMatching(QueryBuilder qb, String term) {
         return qb.keyword()
                 .boostedTo(50f)
-                .onFields("name")
+                .onField("name")
                 .matching(term)
                 .createQuery();
     }
@@ -56,8 +52,8 @@ public class CountrySearchRepository extends BaseSearchRepository<Country> {
     private Query wildcardNameMatching(QueryBuilder qb, String term) {
         return qb.keyword().wildcard()
                 .boostedTo(20f)
-                .onFields("name")
-                .matching(String.format("%s*", term))
+                .onField("name")
+                .matching(term.toLowerCase() + "*")
                 .createQuery();
     }
 
@@ -66,7 +62,7 @@ public class CountrySearchRepository extends BaseSearchRepository<Country> {
                 .boostedTo(1f)
                 .fuzzy()
                 .withEditDistanceUpTo(1)
-                .onFields("name")
+                .onField("name")
                 .matching(term)
                 .createQuery();
     }
