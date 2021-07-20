@@ -71,6 +71,7 @@ h1 {
 
 .search-result h3 {
     margin-bottom: 1px;
+    color: var(--primary-color);
 }
 
 .search-result p {
@@ -101,19 +102,23 @@ h1 {
     font-size: 18px;
     font-weight: bold;
     color: var(--primary-color);
+    cursor: pointer;
 }
 
 .next {
     font-size: 18px;
     font-weight: bold;
     color: var(--primary-color);
+    cursor: pointer;
 }
 
 .page {
     font-size: 18px;
+    cursor: pointer;
 }
 
 .page.active {
     font-weight: bold;
     color: var(--primary-color);
+    cursor: default;
 }

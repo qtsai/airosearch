@@ -54,6 +54,7 @@ function selectCountry(el, page = 0) {
 
 function processAirportsResponse() {
     let results = getAndClearSearchResultsEl();
+    scrollTop();
     if (this.status === 200) {
         showNavigationBar(true)
         let response = JSON.parse(this.responseText);
@@ -105,8 +106,16 @@ function showNavigationBar(show) {
 
 
 function pagination({current, numberOfPages}) {
-    document.getElementById("prev").hidden = current === 0;
-    document.getElementById("next").hidden = current === numberOfPages - 1;
+    let prev = document.getElementById("prev");
+    prev.hidden = current === 0;
+    prev.onclick = function () {
+        getAirports(getCountry(), current - 1, processAirportsResponse);
+    }
+    let next = document.getElementById("next");
+    next.hidden = current === numberOfPages - 1;
+    next.onclick = function () {
+        getAirports(getCountry(), current + 1, processAirportsResponse);
+    }
     let navigation = document.getElementById("pagination");
     navigation.innerHTML = "";
 
@@ -150,4 +159,8 @@ function getPageNumber(page) {
 
 function getCountry() {
     return document.getElementById("result-type").getAttribute("data-country");
+}
+
+function scrollTop() {
+    window.scrollTo({ top: 0, behavior: 'auto' });
 }
