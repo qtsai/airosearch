@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Airosearch</title>
+    <link rel="stylesheet" href="css/main.css"/>
+    <script src="js/main.js"></script>
+    <script src="js/api.js"></script>
+</head>
+<body>
+<header>
+    <h1>Airosearch</h1>
+    <div class="search">
+        <div class="search__main">
+            <label for="search-bar"></label>
+            <input class="search-bar" id="search-bar" placeholder="US or United States...">
+            <button class="search-btn" onclick="search()">search</button>
+        </div>
+        <div class="search__secondary">
+            <span>Top 10:</span>
+            <span class="search__small" onclick="top10MostAirports()">Most airports</span>
+        </div>
+    </div>
+</header>
+<hr class="divider">
+<div>
+    <div class="result-type">
+        <h3 id="result-type"></h3>
+    </div>
+    <div class="search-results" id="search-results">
+    </div>
+    <div class="navigation__wrapper" id="nav-bar" hidden>
+        <div class="navigation" id="navigation">
+            <span class="prev" id="prev">&lt;</span>
+            <div class="pagination" id="pagination">
+            </div>
+            <span class="next" id="next">&gt;</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>
