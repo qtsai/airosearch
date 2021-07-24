@@ -33,7 +33,10 @@ public class DatabaseDataInitializer {
     private final RunwayRepository runwayRepository;
     private final CSVImportHistoryRepository csvImportHistoryRepository;
 
-    public DatabaseDataInitializer(CountryRepository countryRepository, AirportRepository airportRepository, RunwayRepository runwayRepository, CSVImportHistoryRepository csvImportHistoryRepository) {
+    public DatabaseDataInitializer(CountryRepository countryRepository,
+                                   AirportRepository airportRepository,
+                                   RunwayRepository runwayRepository,
+                                   CSVImportHistoryRepository csvImportHistoryRepository) {
         this.countryRepository = countryRepository;
         this.airportRepository = airportRepository;
         this.runwayRepository = runwayRepository;
