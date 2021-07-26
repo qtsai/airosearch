@@ -7,7 +7,8 @@
 - [Introduction](#introduction)
 - [Requirements](#requirements)
 - [Local Development Setup](#local-development-setup)
-- [Setup Production](#Setup production environment)
+- [Setup Production](#setup-production-environment)
+- [Search Engine](#search-engine-interface)
 
 ## Introduction
 
@@ -54,3 +55,14 @@ mvn clean package
 
 3. Deploy jar to any environment/OS with JDK 11 installed
 `java -jar target/airosearch-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod`
+   
+## Search engine interface
+
+The deployed the spring boot application will listen to port 8080 by default
+The interface consist of a single page which is located at http://localhost:8080
+
+- Here you can enter a country name or code and click 'search', and it will return 
+  (exact code / exact name / partial name / fuzzy name) matches.
+- In the list of countries you will be able to click on the country name to fetch its airports
+   - if there are more than 20 (default) airports, there will be pagination available.
+

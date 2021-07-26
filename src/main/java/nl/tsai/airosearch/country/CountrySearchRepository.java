@@ -30,7 +30,7 @@ public class CountrySearchRepository extends BaseSearchRepository<Country> {
     }
 
     public List<Country> searchSingleByTerm(String term) {
-        return searchByTerm(term, 1, 1);
+        return searchByTerm(term, 1, 0);
     }
 
     private Query exactCodeMatching(QueryBuilder qb, String term) {

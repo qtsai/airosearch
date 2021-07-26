@@ -56,4 +56,15 @@ public class CountrySearchRepositoryIntegrationTest {
         Country bestMatch = countries.get(0);
         assertThat(bestMatch.getName(), is("Zimbabwe"));
     }
+
+    @Test
+    void searchSingleByTerm_whenExactCode_shouldReturnExactCodeMatch() {
+        List<Country> countries = countrySearchRepository.searchSingleByTerm("ZW");
+
+        assertThat(countries.isEmpty(), is(false));
+
+        Country bestMatch = countries.get(0);
+        assertThat(bestMatch.getCode(), is("ZW"));
+        assertThat(bestMatch.getName(), is("Zimbabwe"));
+    }
 }
