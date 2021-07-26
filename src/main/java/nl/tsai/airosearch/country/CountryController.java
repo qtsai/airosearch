@@ -30,7 +30,7 @@ public class CountryController {
     @GetMapping("/search")
     public List<CountryDto> countriesByCodeOrName(@RequestParam @NotBlank String term,
                                                   @RequestParam(defaultValue = "10") @Min(1) int size,
-                                                  @RequestParam(defaultValue = "1") @Min(1) int page) {
+                                                  @RequestParam(defaultValue = "0") @Min(0) int page) {
         return countryService.searchCountriesBy(term, size, page);
     }
 

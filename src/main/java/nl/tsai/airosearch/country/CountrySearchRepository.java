@@ -24,7 +24,7 @@ public class CountrySearchRepository extends BaseSearchRepository<Country> {
                 .should(wildcardNameMatching(queryBuilder, term))
                 .should(fuzzyNameMatching(queryBuilder, term))
                 .createQuery();
-        FullTextQuery fullTextQuery = createFullTextQuery(query).setMaxResults(size).setFirstResult(size * (page - 1));
+        FullTextQuery fullTextQuery = createFullTextQuery(query).setMaxResults(size).setFirstResult(size * page);
         @SuppressWarnings("unchecked") final List<Country> results = fullTextQuery.getResultList();
         return results;
     }
